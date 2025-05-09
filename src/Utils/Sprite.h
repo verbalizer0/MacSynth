@@ -128,6 +128,9 @@ public:
     BasicSprite();
     virtual ~BasicSprite();
     
+    // Add this to fix the warning
+    using Sprite::setup;
+    
     // Setup with color
     void setup(float x, float y, float scale, float rotation, ofColor color);
     
@@ -152,6 +155,9 @@ class GifSprite : public Sprite {
 public:
     GifSprite();
     virtual ~GifSprite();
+    
+    // Add this to fix the warning
+    using Sprite::setup;
     
     // Setup with GIF path
     void setup(string path, float x, float y, float scale, float rotation);

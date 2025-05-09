@@ -485,63 +485,69 @@ void BackgroundLayer::applyAudioReactivity(float* audioData, int numBands) {
     patternSpeed = ofLerp(patternSpeed, 1.0 + bassEnergy * 2.0, 0.1);
 }
 
+// Fixed savePreset method for BackgroundLayer.cpp
 void BackgroundLayer::savePreset(ofXml& xml) {
     // Save source type
-    xml.addChild("sourceType").set((int)sourceType);
+    ofXml sourceTypeNode;
+    sourceTypeNode.set(ofToString((int)sourceType));
+    xml.appendChild("sourceType").set(ofToString((int)sourceType));
     
     // Save color parameters
     ofXml colorXml;
-    colorXml.addChild("colorStart_r").set(colorStart.r);
-    colorXml.addChild("colorStart_g").set(colorStart.g);
-    colorXml.addChild("colorStart_b").set(colorStart.b);
-    colorXml.addChild("colorEnd_r").set(colorEnd.r);
-    colorXml.addChild("colorEnd_g").set(colorEnd.g);
-    colorXml.addChild("colorEnd_b").set(colorEnd.b);
-    colorXml.addChild("gradientType").set(gradientType);
-    xml.addChild("color").appendChild(colorXml);
+    colorXml.appendChild("colorStart_r").set(ofToString(colorStart.r));
+    colorXml.appendChild("colorStart_g").set(ofToString(colorStart.g));
+    colorXml.appendChild("colorStart_b").set(ofToString(colorStart.b));
+    colorXml.appendChild("colorEnd_r").set(ofToString(colorEnd.r));
+    colorXml.appendChild("colorEnd_g").set(ofToString(colorEnd.g));
+    colorXml.appendChild("colorEnd_b").set(ofToString(colorEnd.b));
+    colorXml.appendChild("gradientType").set(gradientType);
+    xml.appendChild("color").appendChild(colorXml);
     
     // Save feedback parameters
     ofXml feedbackXml;
-    feedbackXml.addChild("amount").set(feedbackAmount);
-    feedbackXml.addChild("zoom").set(feedbackZoom);
-    feedbackXml.addChild("rotate").set(feedbackRotate);
-    feedbackXml.addChild("colorShift").set(colorShift);
-    xml.addChild("feedback").appendChild(feedbackXml);
+    feedbackXml.appendChild("amount").set(ofToString(feedbackAmount));
+    feedbackXml.appendChild("zoom").set(ofToString(feedbackZoom));
+    feedbackXml.appendChild("rotate").set(ofToString(feedbackRotate));
+    feedbackXml.appendChild("colorShift").set(ofToString(colorShift));
+    xml.appendChild("feedback").appendChild(feedbackXml);
     
     // Save pattern parameters
     ofXml patternXml;
-    patternXml.addChild("type").set((int)patternType);
-    patternXml.addChild("speed").set(patternSpeed);
-    patternXml.addChild("density").set(patternDensity);
-    xml.addChild("pattern").appendChild(patternXml);
+    patternXml.appendChild("type").set(ofToString((int)patternType));
+    patternXml.appendChild("speed").set(ofToString(patternSpeed));
+    patternXml.appendChild("density").set(ofToString(patternDensity));
+    xml.appendChild("pattern").appendChild(patternXml);
     
     // Save video source if applicable
     if (sourceType == VIDEO && videoPlayer.isLoaded()) {
-        xml.addChild("videoPath").set(videoPlayer.getMoviePath());
+        xml.appendChild("videoPath").set(videoPlayer.getMoviePath());
     }
 }
 
+// Fixed loadPreset method for BackgroundLayer.cpp
 void BackgroundLayer::loadPreset(ofXml& xml) {
     // Load source type
-    if (xml.find("sourceType").size() > 0) {
-        setSourceType((SourceType)xml.getChild("sourceType").getIntValue());
+    auto sourceTypeNode = xml.find("sourceType");
+    if (sourceTypeNode.size() > 0) {
+        setSourceType((SourceType)ofToInt(xml.getChild("sourceType").getValue()));
     }
     
     // Load color parameters
-    if (xml.find("color").size() > 0) {
+    auto colorNode = xml.find("color");
+    if (colorNode.size() > 0) {
         ofXml colorXml = xml.getChild("color");
         int r, g, b;
         
         // Start color
-        r = colorXml.getChild("colorStart_r").getIntValue();
-        g = colorXml.getChild("colorStart_g").getIntValue();
-        b = colorXml.getChild("colorStart_b").getIntValue();
+        r = ofToInt(colorXml.getChild("colorStart_r").getValue());
+        g = ofToInt(colorXml.getChild("colorStart_g").getValue());
+        b = ofToInt(colorXml.getChild("colorStart_b").getValue());
         setColorStart(ofColor(r, g, b));
         
         // End color
-        r = colorXml.getChild("colorEnd_r").getIntValue();
-        g = colorXml.getChild("colorEnd_g").getIntValue();
-        b = colorXml.getChild("colorEnd_b").getIntValue();
+        r = ofToInt(colorXml.getChild("colorEnd_r").getValue());
+        g = ofToInt(colorXml.getChild("colorEnd_g").getValue());
+        b = ofToInt(colorXml.getChild("colorEnd_b").getValue());
         setColorEnd(ofColor(r, g, b));
         
         // Gradient type
@@ -549,24 +555,27 @@ void BackgroundLayer::loadPreset(ofXml& xml) {
     }
     
     // Load feedback parameters
-    if (xml.find("feedback").size() > 0) {
+    auto feedbackNode = xml.find("feedback");
+    if (feedbackNode.size() > 0) {
         ofXml feedbackXml = xml.getChild("feedback");
-        setFeedbackAmount(feedbackXml.getChild("amount").getFloatValue());
-        setFeedbackZoom(feedbackXml.getChild("zoom").getFloatValue());
-        setFeedbackRotate(feedbackXml.getChild("rotate").getFloatValue());
-        setColorShift(feedbackXml.getChild("colorShift").getFloatValue());
+        setFeedbackAmount(ofToFloat(feedbackXml.getChild("amount").getValue()));
+        setFeedbackZoom(ofToFloat(feedbackXml.getChild("zoom").getValue()));
+        setFeedbackRotate(ofToFloat(feedbackXml.getChild("rotate").getValue()));
+        setColorShift(ofToFloat(feedbackXml.getChild("colorShift").getValue()));
     }
     
     // Load pattern parameters
-    if (xml.find("pattern").size() > 0) {
+    auto patternNode = xml.find("pattern");
+    if (patternNode.size() > 0) {
         ofXml patternXml = xml.getChild("pattern");
-        setPatternType((PatternType)patternXml.getChild("type").getIntValue());
-        setPatternSpeed(patternXml.getChild("speed").getFloatValue());
-        setPatternDensity(patternXml.getChild("density").getFloatValue());
+        setPatternType((PatternType)ofToInt(patternXml.getChild("type").getValue()));
+        setPatternSpeed(ofToFloat(patternXml.getChild("speed").getValue()));
+        setPatternDensity(ofToFloat(patternXml.getChild("density").getValue()));
     }
     
     // Load video source if applicable
-    if (sourceType == VIDEO && xml.find("videoPath").size() > 0) {
+    auto videoPathNode = xml.find("videoPath");
+    if (sourceType == VIDEO && videoPathNode.size() > 0) {
         string videoPath = xml.getChild("videoPath").getValue();
         if (ofFile::doesFileExist(videoPath)) {
             setVideoSource(videoPath);

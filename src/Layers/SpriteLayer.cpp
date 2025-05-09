@@ -201,86 +201,113 @@ string SpriteLayer::generateSpriteId() {
     return id;
 }
 
+// Fixed savePreset method for SpriteLayer.cpp
 void SpriteLayer::savePreset(ofXml& xml) {
     // Save layer parameters
-    xml.addChild("density").set(density);
-    xml.addChild("maxTrailLength").set(maxTrailLength);
-    xml.addChild("spriteScale").set(spriteScale);
-    xml.addChild("motionAmount").set(motionAmount);
-    xml.addChild("blendMode").set(blendMode);
-    xml.addChild("audioReactivity").set(audioReactivity);
+    xml.appendChild("density").set(ofToString(density));
+    xml.appendChild("maxTrailLength").set(ofToString(maxTrailLength));
+    xml.appendChild("spriteScale").set(ofToString(spriteScale));
+    xml.appendChild("motionAmount").set(ofToString(motionAmount));
+    xml.appendChild("blendMode").set(blendMode);
+    xml.appendChild("audioReactivity").set(ofToString(audioReactivity));
     
     // Save sprites
     ofXml spritesXml;
     for (int i = 0; i < sprites.size(); i++) {
         ofXml spriteXml;
-        spriteXml.addChild("type").set(sprites[i]->getType());
-        spriteXml.addChild("x").set(sprites[i]->getX());
-        spriteXml.addChild("y").set(sprites[i]->getY());
-        spriteXml.addChild("scale").set(sprites[i]->getScale());
-        spriteXml.addChild("rotation").set(sprites[i]->getRotation());
+        spriteXml.appendChild("type").set(sprites[i]->getType());
+        spriteXml.appendChild("x").set(ofToString(sprites[i]->getX()));
+        spriteXml.appendChild("y").set(ofToString(sprites[i]->getY()));
+        spriteXml.appendChild("scale").set(ofToString(sprites[i]->getScale()));
+        spriteXml.appendChild("rotation").set(ofToString(sprites[i]->getRotation()));
         
         if (sprites[i]->getType() == "gif") {
-            spriteXml.addChild("path").set(((GifSprite*)sprites[i])->getPath());
+            spriteXml.appendChild("path").set(((GifSprite*)sprites[i])->getPath());
         } else if (sprites[i]->getType() == "basic") {
             BasicSprite* basicSprite = (BasicSprite*)sprites[i];
             ofXml colorXml;
-            colorXml.addChild("r").set(basicSprite->getColor().r);
-            colorXml.addChild("g").set(basicSprite->getColor().g);
-            colorXml.addChild("b").set(basicSprite->getColor().b);
-            spriteXml.addChild("color").appendChild(colorXml);
+            colorXml.appendChild("r").set(ofToString(basicSprite->getColor().r));
+            colorXml.appendChild("g").set(ofToString(basicSprite->getColor().g));
+            colorXml.appendChild("b").set(ofToString(basicSprite->getColor().b));
+            spriteXml.appendChild("color").appendChild(colorXml);
         }
         
-        spritesXml.addChild("sprite").appendChild(spriteXml);
+        string spriteNodeName = "sprite" + ofToString(i);
+        spritesXml.appendChild(spriteNodeName).appendChild(spriteXml);
     }
     
-    xml.addChild("sprites").appendChild(spritesXml);
+    xml.appendChild("sprites").appendChild(spritesXml);
 }
 
+// Fixed loadPreset method for SpriteLayer.cpp
 void SpriteLayer::loadPreset(ofXml& xml) {
     // Clear existing sprites
     clearSprites();
     
     // Load layer parameters
-    if (xml.find("density").size() > 0) {
-        setDensity(xml.getChild("density").getIntValue());
+    auto densityNode = xml.find("density");
+    if (densityNode.size() > 0) {
+        setDensity(ofToInt(xml.getChild("density").getValue()));
     }
     
-    if (xml.find("maxTrailLength").size() > 0) {
-        setMaxTrailLength(xml.getChild("maxTrailLength").getIntValue());
+    auto maxTrailLengthNode = xml.find("maxTrailLength");
+    if (maxTrailLengthNode.size() > 0) {
+        setMaxTrailLength(ofToInt(xml.getChild("maxTrailLength").getValue()));
     }
     
-    if (xml.find("spriteScale").size() > 0) {
-        spriteScale = xml.getChild("spriteScale").getFloatValue();
+    auto spriteScaleNode = xml.find("spriteScale");
+    if (spriteScaleNode.size() > 0) {
+        spriteScale = ofToFloat(xml.getChild("spriteScale").getValue());
     }
     
-    if (xml.find("motionAmount").size() > 0) {
-        motionAmount = xml.getChild("motionAmount").getFloatValue();
+    auto motionAmountNode = xml.find("motionAmount");
+    if (motionAmountNode.size() > 0) {
+        motionAmount = ofToFloat(xml.getChild("motionAmount").getValue());
     }
     
-    if (xml.find("blendMode").size() > 0) {
+    auto blendModeNode = xml.find("blendMode");
+    if (blendModeNode.size() > 0) {
         setBlendMode(xml.getChild("blendMode").getValue());
     }
     
-    if (xml.find("audioReactivity").size() > 0) {
-        setAudioReactivity(xml.getChild("audioReactivity").getFloatValue());
+    auto audioReactivityNode = xml.find("audioReactivity");
+    if (audioReactivityNode.size() > 0) {
+        setAudioReactivity(ofToFloat(xml.getChild("audioReactivity").getValue()));
     }
     
     // Load sprites
-    if (xml.find("sprites").size() > 0) {
+    auto spritesNode = xml.find("sprites");
+    if (spritesNode.size() > 0) {
         ofXml spritesXml = xml.getChild("sprites");
+        auto spriteNodes = spritesXml.getChildren();
         
-        vector<ofXml> spriteXmlList = spritesXml.getChildren("sprite");
-        for (auto& spriteXml : spriteXmlList) {
-            string type = spriteXml.getChild("type").getValue();
-            float x = spriteXml.getChild("x").getFloatValue();
-            float y = spriteXml.getChild("y").getFloatValue();
-            float scale = spriteXml.getChild("scale").getFloatValue();
-            float rotation = spriteXml.getChild("rotation").getFloatValue();
+        for (auto& spriteNodeParent : spriteNodes) {
+            auto spriteNode = spriteNodeParent.getFirstChild();
+            
+            // Get sprite properties
+            auto typeNode = spriteNode.getChild("type");
+            if (!typeNode) continue;
+            
+            string type = typeNode.getValue();
+            
+            auto xNode = spriteNode.getChild("x");
+            auto yNode = spriteNode.getChild("y");
+            auto scaleNode = spriteNode.getChild("scale");
+            auto rotationNode = spriteNode.getChild("rotation");
+            
+            if (!xNode || !yNode || !scaleNode || !rotationNode) continue;
+            
+            float x = ofToFloat(xNode.getValue());
+            float y = ofToFloat(yNode.getValue());
+            float scale = ofToFloat(scaleNode.getValue());
+            float rotation = ofToFloat(rotationNode.getValue());
             
             if (type == "gif") {
                 // Load GIF sprite
-                string path = spriteXml.getChild("path").getValue();
+                auto pathNode = spriteNode.getChild("path");
+                if (!pathNode) continue;
+                
+                string path = pathNode.getValue();
                 if (ofFile::doesFileExist(path)) {
                     GifSprite* sprite = new GifSprite();
                     sprite->setup(path, x, y, scale, rotation);
@@ -292,12 +319,18 @@ void SpriteLayer::loadPreset(ofXml& xml) {
             } else if (type == "basic") {
                 // Load basic sprite
                 ofColor color = ofColor::white;
-                if (spriteXml.find("color").size() > 0) {
-                    ofXml colorXml = spriteXml.getChild("color");
-                    int r = colorXml.getChild("r").getIntValue();
-                    int g = colorXml.getChild("g").getIntValue();
-                    int b = colorXml.getChild("b").getIntValue();
-                    color = ofColor(r, g, b);
+                auto colorNode = spriteNode.getChild("color");
+                if (colorNode) {
+                    auto rNode = colorNode.getChild("r");
+                    auto gNode = colorNode.getChild("g");
+                    auto bNode = colorNode.getChild("b");
+                    
+                    if (rNode && gNode && bNode) {
+                        int r = ofToInt(rNode.getValue());
+                        int g = ofToInt(gNode.getValue());
+                        int b = ofToInt(bNode.getValue());
+                        color = ofColor(r, g, b);
+                    }
                 }
                 
                 BasicSprite* sprite = new BasicSprite();

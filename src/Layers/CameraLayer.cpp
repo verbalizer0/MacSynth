@@ -53,6 +53,7 @@ void CameraLayer::setup(int width, int height) {
     setupCamera(0);
 }
 
+// Fixed setupCamera method for CameraLayer.cpp
 bool CameraLayer::setupCamera(int deviceId) {
     // First close existing camera if open
     if (camera.isInitialized()) {
@@ -65,7 +66,7 @@ bool CameraLayer::setupCamera(int deviceId) {
     
     if (success) {
         active = true;
-        cout << "Camera initialized: " << camera.getDeviceName() << endl;
+        cout << "Camera initialized: Device ID " << deviceId << endl;
     } else {
         active = false;
         cout << "Failed to initialize camera with device ID " << deviceId << endl;
@@ -251,80 +252,93 @@ bool CameraLayer::setParameter(string name, float value) {
     return false;
 }
 
+// Fixed savePreset method for CameraLayer.cpp
 void CameraLayer::savePreset(ofXml& xml) {
     // Save camera settings
-    xml.addChild("active").set(active);
-    xml.addChild("feedbackEnabled").set(feedbackEnabled);
+    xml.appendChild("active").set(ofToString(active));
+    xml.appendChild("feedbackEnabled").set(ofToString(feedbackEnabled));
     
     // Save position and transform
-    xml.addChild("x").set(x);
-    xml.addChild("y").set(y);
-    xml.addChild("scale").set(scale);
-    xml.addChild("rotation").set(rotation);
-    xml.addChild("opacity").set(opacity);
-    xml.addChild("mirror").set(mirror);
+    xml.appendChild("x").set(ofToString(x));
+    xml.appendChild("y").set(ofToString(y));
+    xml.appendChild("scale").set(ofToString(scale));
+    xml.appendChild("rotation").set(ofToString(rotation));
+    xml.appendChild("opacity").set(ofToString(opacity));
+    xml.appendChild("mirror").set(ofToString(mirror));
     
     // Save chroma key settings
-    xml.addChild("chromaKeyEnabled").set(chromaKeyEnabled);
+    xml.appendChild("chromaKeyEnabled").set(ofToString(chromaKeyEnabled));
     
     ofXml chromaColorXml;
-    chromaColorXml.addChild("r").set(chromaColor.r);
-    chromaColorXml.addChild("g").set(chromaColor.g);
-    chromaColorXml.addChild("b").set(chromaColor.b);
-    xml.addChild("chromaColor").appendChild(chromaColorXml);
+    chromaColorXml.appendChild("r").set(ofToString(chromaColor.r));
+    chromaColorXml.appendChild("g").set(ofToString(chromaColor.g));
+    chromaColorXml.appendChild("b").set(ofToString(chromaColor.b));
+    xml.appendChild("chromaColor").appendChild(chromaColorXml);
     
-    xml.addChild("chromaTolerance").set(chromaTolerance);
+    xml.appendChild("chromaTolerance").set(ofToString(chromaTolerance));
 }
 
+// Fixed loadPreset method for CameraLayer.cpp
 void CameraLayer::loadPreset(ofXml& xml) {
     // Load camera settings
-    if (xml.find("active").size() > 0) {
-        setActive(xml.getChild("active").getBoolValue());
+    auto activeNode = xml.find("active");
+    if (activeNode.size() > 0) {
+        setActive(ofToBool(xml.getChild("active").getValue()));
     }
     
-    if (xml.find("feedbackEnabled").size() > 0) {
-        setFeedbackEnabled(xml.getChild("feedbackEnabled").getBoolValue());
+    auto feedbackNode = xml.find("feedbackEnabled");
+    if (feedbackNode.size() > 0) {
+        setFeedbackEnabled(ofToBool(xml.getChild("feedbackEnabled").getValue()));
     }
     
     // Load position and transform
-    if (xml.find("x").size() > 0) {
-        setX(xml.getChild("x").getFloatValue());
+    auto xNode = xml.find("x");
+    if (xNode.size() > 0) {
+        setX(ofToFloat(xml.getChild("x").getValue()));
     }
     
-    if (xml.find("y").size() > 0) {
-        setY(xml.getChild("y").getFloatValue());
+    auto yNode = xml.find("y");
+    if (yNode.size() > 0) {
+        setY(ofToFloat(xml.getChild("y").getValue()));
     }
     
-    if (xml.find("scale").size() > 0) {
-        setScale(xml.getChild("scale").getFloatValue());
+    auto scaleNode = xml.find("scale");
+    if (scaleNode.size() > 0) {
+        setScale(ofToFloat(xml.getChild("scale").getValue()));
     }
     
-    if (xml.find("rotation").size() > 0) {
-        setRotation(xml.getChild("rotation").getFloatValue());
+    auto rotationNode = xml.find("rotation");
+    if (rotationNode.size() > 0) {
+        setRotation(ofToFloat(xml.getChild("rotation").getValue()));
     }
     
-    if (xml.find("opacity").size() > 0) {
-        setOpacity(xml.getChild("opacity").getFloatValue());
+    auto opacityNode = xml.find("opacity");
+    if (opacityNode.size() > 0) {
+        setOpacity(ofToFloat(xml.getChild("opacity").getValue()));
     }
     
-    if (xml.find("mirror").size() > 0) {
-        setMirror(xml.getChild("mirror").getBoolValue());
+    auto mirrorNode = xml.find("mirror");
+    if (mirrorNode.size() > 0) {
+        setMirror(ofToBool(xml.getChild("mirror").getValue()));
     }
     
     // Load chroma key settings
-    if (xml.find("chromaKeyEnabled").size() > 0) {
-        setChromaKey(xml.getChild("chromaKeyEnabled").getBoolValue());
+    auto chromaKeyNode = xml.find("chromaKeyEnabled");
+    if (chromaKeyNode.size() > 0) {
+        setChromaKey(ofToBool(xml.getChild("chromaKeyEnabled").getValue()));
     }
     
-    if (xml.find("chromaColor").size() > 0) {
+    auto chromaColorNode = xml.find("chromaColor");
+    if (chromaColorNode.size() > 0) {
         ofXml colorXml = xml.getChild("chromaColor");
-        int r = colorXml.getChild("r").getIntValue();
-        int g = colorXml.getChild("g").getIntValue();
-        int b = colorXml.getChild("b").getIntValue();
+        int r = ofToInt(colorXml.getChild("r").getValue());
+        int g = ofToInt(colorXml.getChild("g").getValue());
+        int b = ofToInt(colorXml.getChild("b").getValue());
         setChromaColor(ofColor(r, g, b));
     }
     
-    if (xml.find("chromaTolerance").size() > 0) {
-        setChromaTolerance(xml.getChild("chromaTolerance").getFloatValue());
+    auto chromaToleranceNode = xml.find("chromaTolerance");
+    if (chromaToleranceNode.size() > 0) {
+        setChromaTolerance(ofToFloat(xml.getChild("chromaTolerance").getValue()));
     }
 }

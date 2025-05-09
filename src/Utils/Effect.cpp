@@ -75,42 +75,47 @@ float Effect::getAudioEnergy(float* audioData, int numBands, string range) {
     return sum / (endBin - startBin + 1);
 }
 
+// Fixed savePreset method for Effect.cpp
 void Effect::savePreset(ofXml& xml) {
-    ofXml enabledXml;
-    enabledXml.set(enabled);
-    xml.appendChild("enabled").appendChild(enabledXml);
-    
-    ofXml intensityXml;
-    intensityXml.set(intensity);
-    xml.appendChild("intensity").appendChild(intensityXml);
+    // Save enabled status and intensity
+    xml.appendChild("enabled").set(ofToString(enabled));
+    xml.appendChild("intensity").set(ofToString(intensity));
     
     // Save parameters
     ofXml paramsXml;
     for (auto& param : params) {
-        ofXml paramXml;
-        paramXml.set(param.second);
-        paramsXml.appendChild(param.first).appendChild(paramXml);
+        paramsXml.appendChild(param.first).set(ofToString(param.second));
     }
     xml.appendChild("parameters").appendChild(paramsXml);
 }
 
+// Fixed loadPreset method for Effect.cpp
 void Effect::loadPreset(ofXml& xml) {
     // Load enabled status
-    if (xml.exists("enabled")) {
-        enabled = xml.getChild("enabled").getBoolValue();
+    auto enabledNode = xml.find("enabled");
+    if (enabledNode.size() > 0) {
+        enabled = ofToBool(xml.getChild("enabled").getValue());
     }
     
     // Load intensity
-    if (xml.exists("intensity")) {
-        intensity = xml.getChild("intensity").getFloatValue();
+    auto intensityNode = xml.find("intensity");
+    if (intensityNode.size() > 0) {
+        intensity = ofToFloat(xml.getChild("intensity").getValue());
     }
     
     // Load parameters
-    if (xml.exists("parameters")) {
+    auto paramsNode = xml.find("parameters");
+    if (paramsNode.size() > 0) {
         ofXml paramsXml = xml.getChild("parameters");
-        for (auto& param : params) {
-            if (paramsXml.exists(param.first)) {
-                params[param.first] = paramsXml.getChild(param.first).getFloatValue();
+        auto paramNodes = paramsXml.getChildren();
+        
+        for (auto& paramNode : paramNodes) {
+            string paramName = paramNode.getName();
+            float paramValue = ofToFloat(paramNode.getValue());
+            
+            // Only set if the parameter exists in our map
+            if (params.find(paramName) != params.end()) {
+                params[paramName] = paramValue;
             }
         }
     }

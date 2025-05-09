@@ -72,7 +72,7 @@ private:
     void maintainDensity();
     
     // Currently available sprite IDs to avoid duplicates
-    set<string> usedIds;
+    std::set<string> usedIds;
     
     // Generate unique sprite ID
     string generateSpriteId();
