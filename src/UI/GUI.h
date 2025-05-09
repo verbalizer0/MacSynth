@@ -2,6 +2,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "../ImGuiFix.h" // Add this line before imgui includes
 #include "ofxImGui.h"
 #include "../Layers/BackgroundLayer.h"
 #include "../Layers/SpriteLayer.h"

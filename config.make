@@ -8,7 +8,7 @@
 #   The location of your root openFrameworks installation
 #       (default) OF_ROOT = ../../.. 
 ################################################################################
-OF_ROOT = ../../..
+OF_ROOT = /Users/michall/openFrameworks
 
 ################################################################################
 # PROJECT ROOT
@@ -16,7 +16,7 @@ OF_ROOT = ../../..
 #       (default) PROJECT_ROOT = . (this directory)
 #    
 ################################################################################
-# PROJECT_ROOT = .
+PROJECT_ROOT = /Users/michall/openFrameworks/apps/myApps/MacSynth
 
 ################################################################################
 # PROJECT SPECIFIC CHECKS

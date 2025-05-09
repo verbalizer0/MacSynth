@@ -1,12 +1,37 @@
-# Makefile for MacSynth Video Synthesizer
+# Simple Direct Makefile for MacSynth
 
-# Include the openFrameworks common makefile
-include $(OF_ROOT)/Users/michall/openFrameworks/libs/openFrameworksCompiled/project/makefileCommon/config.make
+CXX = g++
+CXXFLAGS = -Wall -std=c++11 -DofIndexType="unsigned short"
+CFLAGS += -I/path/to/directory/containing/tesselator.h
+CFLAGS += -I$(OF_ROOT)/libs/libtess2/include
 
-# App name and source files
-APPNAME = MacSynth
+# OpenFrameworks Path
+OF_PATH = /Users/michall/openFrameworks
 
-# The source code
+# Include paths
+INCLUDES = -I$(OF_PATH)/libs/openFrameworks \
+           -I$(OF_PATH)/libs/openFrameworks/utils \
+           -I$(OF_PATH)/libs/openFrameworks/communication \
+           -I$(OF_PATH)/libs/openFrameworks/app \
+           -I$(OF_PATH)/libs/openFrameworks/events \
+           -I$(OF_PATH)/libs/openFrameworks/graphics \
+           -I$(OF_PATH)/libs/openFrameworks/math \
+           -I$(OF_PATH)/libs/openFrameworks/types \
+           -I$(OF_PATH)/libs/openFrameworks/sound \
+           -I$(OF_PATH)/libs/openFrameworks/gl \
+           -I$(OF_PATH)/libs/openFrameworks/3d \
+           -I$(OF_PATH)/libs/openFrameworks/video \
+           -I$(OF_PATH)/addons/ofxGif/src \
+           -I$(OF_PATH)/addons/ofxFft/src \
+           -I$(OF_PATH)/addons/ofxImGui/src \
+           -I$(OF_PATH)/addons/ofxImGui/libs/imgui/src \
+           -I./src \
+           -I./src/Layers \
+           -I./src/Utils \
+           -I./src/UI
+
+
+# Source files
 SOURCES = src/main.cpp \
           src/ofApp.cpp \
           src/Layers/BackgroundLayer.cpp \
@@ -17,44 +42,37 @@ SOURCES = src/main.cpp \
           src/Utils/Effect.cpp \
           src/Utils/FeedbackEffect.cpp \
           src/Utils/PixelateEffect.cpp \
-          src/Utils/GlitchEffect.cpp \
-          src/Utils/StrobeEffect.cpp \
-          src/Utils/WaveEffect.cpp \
           src/Utils/Sprite.cpp \
           src/Utils/SpriteLibrary.cpp \
           src/UI/GUI.cpp
 
-# Include search paths
-CFLAGS += -I src/Layers \
-          -I src/Utils \
-          -I src/UI
+# Object files
+OBJECTS = $(SOURCES:.cpp=.o)
 
-# Add these to your CFLAGS
-CFLAGS += -I$(OF_ROOT)/addons/ofxImGui/src \
-          -I$(OF_ROOT)/addons/ofxImGui/libs/imgui/src
+# OpenFrameworks libraries
+LIBS = -L$(OF_PATH)/libs/openFrameworksCompiled/lib/osx \
+       -lopenFrameworks \
+       -framework Cocoa \
+       -framework OpenGL \
+       -framework CoreFoundation
 
-# Link in required addons
-OF_ADDONS_ACTIVE = ofxGif ofxFft ofxImGui
+# Output binary
+BIN = bin/MacSynth
 
-# Include the openFrameworks makefile
-include $(OF_ROOT)/Users/michall/openFrameworks/libs/openFrameworksCompiled/project/makefileCommon/compile.project.mk
+# Default target
+all: $(BIN)
 
-# Custom rules for this project
-.PHONY: run clean
+# Linking
+$(BIN): $(OBJECTS)
+	@mkdir -p bin
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-# Run the application
-run: $(TARGET_NAME)
-	@echo Running $(APPNAME)
-	@./$(TARGET_NAME)
+# Compilation
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-# Clean build files
+# Clean
 clean:
-	@echo Cleaning $(APPNAME)
-	rm -rf obj bin
-	
-# Create directories if not exist
-create_dirs:
-	@mkdir -p src/Layers
-	@mkdir -p src/Utils
-	@mkdir -p src/UI
-	@mkdir -p bin/data/Sprites
+	rm -f $(OBJECTS) $(BIN)
+
+.PHONY: all clean
