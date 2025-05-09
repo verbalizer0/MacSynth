@@ -17,3 +17,4 @@ obj/
 
 echo ".vscode/" >> .gitignore.vscode/
 .vscode/
+.vscode/
