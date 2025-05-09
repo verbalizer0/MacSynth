@@ -1,0 +1,16 @@
+# Build files
+bin/
+obj/
+*.o
+*.a
+*.dylib
+*.so
+
+# macOS junk
+.DS_Store
+
+# openFrameworks system files
+/export/
+/libs/openFrameworksCompiled/
+
+/addons/ofxFft/
