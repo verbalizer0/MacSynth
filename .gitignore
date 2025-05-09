@@ -16,3 +16,4 @@ obj/
 /addons/ofxFft/
 
 echo ".vscode/" >> .gitignore.vscode/
+.vscode/
