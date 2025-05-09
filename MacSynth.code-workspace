@@ -8,5 +8,11 @@
 		}
 	],
 	"openFrameworksProjectGeneratorVersion": "0.103.0",
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"regex": "cpp",
+			"span": "cpp",
+			"chrono": "cpp"
+		}
+	}
 }

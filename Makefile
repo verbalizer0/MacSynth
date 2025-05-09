@@ -29,6 +29,10 @@ CFLAGS += -I src/Layers \
           -I src/Utils \
           -I src/UI
 
+# Add these to your CFLAGS
+CFLAGS += -I$(OF_ROOT)/addons/ofxImGui/src \
+          -I$(OF_ROOT)/addons/ofxImGui/libs/imgui/src
+
 # Link in required addons
 OF_ADDONS_ACTIVE = ofxGif ofxFft ofxImGui
 

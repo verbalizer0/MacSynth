@@ -40,7 +40,7 @@ public:
     
     // Set background source type
     void setSourceType(SourceType type);
-    SourceType getSourceType() { return sourceType; }
+    SourceType getSourceType() const { return sourceType; }
     
     // Set color parameters
     void setColorStart(ofColor color) { colorStart = color; }
@@ -63,6 +63,18 @@ public:
     void setPatternType(PatternType type) { patternType = type; }
     void setPatternSpeed(float speed) { patternSpeed = speed; }
     void setPatternDensity(float density) { patternDensity = density; }
+    
+    // Getter methods for private members
+    float getFeedbackAmount() const { return feedbackAmount; }
+    float getFeedbackZoom() const { return feedbackZoom; }
+    float getFeedbackRotate() const { return feedbackRotate; }
+    float getColorShift() const { return colorShift; }
+    PatternType getPatternType() const { return patternType; }
+    float getPatternSpeed() const { return patternSpeed; }
+    float getPatternDensity() const { return patternDensity; }
+    ofColor getColorStart() const { return colorStart; }
+    ofColor getColorEnd() const { return colorEnd; }
+    string getGradientType() const { return gradientType; }
     
 private:
     int width, height;
