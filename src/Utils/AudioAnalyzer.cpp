@@ -37,7 +37,7 @@ void BeatDetector::update(float* spectrum, int numBands, float* waveform, int bu
     
     // Calculate bass energy
     float bassEnergy = 0;
-    int bassBands = min(numBands / 4, 4); // Use first few bands for bass
+    int bassBands = std::min(numBands / 4, 4); // Use first few bands for bass
     
     for (int i = 0; i < bassBands; i++) {
         bassEnergy += spectrum[i];
@@ -97,7 +97,7 @@ void BeatDetector::update(float* spectrum, int numBands, float* waveform, int bu
                 for (auto i : intervals) {
                     avgInterval += i;
                 }
-                avgInterval /= intervals.length();
+                avgInterval /= intervals.size();
                 
                 // Convert to BPM
                 float newBpm = 60000 / avgInterval;
@@ -106,7 +106,7 @@ void BeatDetector::update(float* spectrum, int numBands, float* waveform, int bu
                 if (newBpm >= 40 && newBpm <= 200) {
                     // Smooth BPM changes
                     bpm = bpm * 0.8 + newBpm * 0.2;
-                    confidence = min(1.0f, beatTimes.size() / (float)maxBeatTimes);
+                    confidence = std::min(1.0f, beatTimes.size() / (float)maxBeatTimes);
                 }
             }
         }
@@ -217,7 +217,7 @@ bool AudioAnalyzer::setupMicrophone(int deviceId) {
     
     if (success) {
         inputReady = true;
-        ofLogNotice("AudioAnalyzer") << "Microphone setup: " << devices[deviceId].name;
+        ofLogNotice("AudioAnalyzer") << "Microphone setup: Device ID " << deviceId;
     } else {
         inputReady = false;
         ofLogError("AudioAnalyzer") << "Failed to setup microphone";
@@ -264,7 +264,6 @@ void AudioAnalyzer::update() {
     for (int i = 0; i < numBands; i++) {
         // Generate fake spectrum data for demonstration
         // In a real implementation, this would use actual FFT results
-        float freq = (float)i / numBands;
         float level = 0.0;
         
         // Simulate some energy in different frequency ranges

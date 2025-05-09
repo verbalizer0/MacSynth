@@ -12,6 +12,7 @@ int main( ){
 
 	auto window = ofCreateWindow(settings);
 
+	ofSetDataPathRoot("../data/");
 	ofRunApp(window, std::make_shared<ofApp>());
 	ofRunMainLoop();
 

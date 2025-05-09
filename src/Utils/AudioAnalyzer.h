@@ -34,7 +34,7 @@ private:
     int maxBeatTimes;
 };
 
-class AudioAnalyzer {
+class AudioAnalyzer : public ofBaseSoundInput {
 public:
     AudioAnalyzer();
     ~AudioAnalyzer();
@@ -73,6 +73,9 @@ public:
     // Trigger states for different bands
     bool getTrigger(string band);
     
+    // Make audioIn public as it needs to be accessible by ofSoundStreamSettings
+    void audioIn(ofSoundBuffer& input);
+    
 private:
     // Audio input
     ofSoundStream soundStream;
@@ -97,9 +100,6 @@ private:
     
     // Beat detection
     BeatDetector beatDetector;
-    
-    // Audio callback
-    void audioIn(ofSoundBuffer& input);
     
     // Calculate band levels
     void calculateBandLevels();

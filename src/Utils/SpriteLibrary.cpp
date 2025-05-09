@@ -341,6 +341,7 @@ bool SpriteLibrary::createCategory(string name) {
     }
 }
 
+// Fixed moveSprite method for SpriteLibrary.cpp
 bool SpriteLibrary::moveSprite(string id, string newCategory) {
     // Find sprite
     SpriteInfo* info = getSpriteById(id);
@@ -375,7 +376,9 @@ bool SpriteLibrary::moveSprite(string id, string newCategory) {
             string thumbnailFilename = ofFilePath::getFileName(info->thumbnailPath);
             string newThumbnailPath = baseDirectory + "/thumbnails/" + newCategory + "/" + thumbnailFilename;
             
-            if (ofFile::exists(info->thumbnailPath)) {
+            // Create a file object to check existence
+            ofFile thumbnailFile(info->thumbnailPath);
+            if (thumbnailFile.exists()) {
                 ofFile::moveFromTo(info->thumbnailPath, newThumbnailPath);
                 info->thumbnailPath = newThumbnailPath;
             }

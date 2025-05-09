@@ -1,5 +1,4 @@
 # Build files
-bin/
 obj/
 *.o
 *.a
@@ -16,5 +15,4 @@ obj/
 /addons/ofxFft/
 
 echo ".vscode/" >> .gitignore.vscode/
-.vscode/
 .vscode/
